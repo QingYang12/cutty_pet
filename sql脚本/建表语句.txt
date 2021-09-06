@@ -1,0 +1,117 @@
+CREATE TABLE `adopt_record_history` (
+  `id` varchar(64) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '主键',
+  `adopt_order_id` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '收养单号',
+  `pet_code` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '宠物code',
+  `adopt_time` datetime DEFAULT NULL COMMENT '收养时间',
+  `adopt_username` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '收养人账号',
+  `telephone` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '紧急联系电话',
+  `adopt_remark` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '收养备注',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `create_user` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '创建人编号',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `update_user` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '更新人编号',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='客户收养宠物记录表';
+
+
+CREATE TABLE `customer` (
+  `id` varchar(64) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `username` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '账号',
+  `password` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '密码',
+  `telephone` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '电话号',
+  `old` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '年龄',
+  `role` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '角色 权限',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `create_user` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '创建人编号',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `update_user` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '更新人编号',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='顾客表';
+
+
+CREATE TABLE `dictionary` (
+  `id` varchar(64) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '主键',
+  `business_type` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '业务类型  pet宠物信息',
+  `code` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '字段值',
+  `name` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '字段名',
+  `img_search` longtext COLLATE utf8_bin COMMENT '搜索页主图片jpg',
+  `imgone` longtext COLLATE utf8_bin COMMENT '图片1jpg',
+  `imgtwo` longtext COLLATE utf8_bin COMMENT '图片2jpg',
+  `imgthree` longtext COLLATE utf8_bin COMMENT '图片3jpg',
+  `pet_style` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '宠物详细类型',
+  `pet_type` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '宠物种类',
+  `pet_details` varchar(2000) COLLATE utf8_bin DEFAULT NULL COMMENT '描述',
+  `remark` varchar(2000) COLLATE utf8_bin DEFAULT NULL COMMENT '简要描述',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `create_user` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '创建人编号',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `update_user` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '更新人编号',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='系统字典表';
+
+CREATE TABLE `pet_storage` (
+  `id` varchar(64) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `pet_code` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '宠物code',
+  `pet_number` int(11) DEFAULT NULL COMMENT '库存数量',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `create_user` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '创建人编号',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `update_user` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '更新人编号',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='宠物库存表  \r\n库中现有宠物';
+
+
+
+CREATE TABLE `succour_record_history` (
+  `id` varchar(64) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `succour_order_id` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '救助单号',
+  `pet_code` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '宠物code',
+  `succour_time` datetime DEFAULT NULL COMMENT '救助时间',
+  `succour_username` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '救助人账号',
+  `succour_remark` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '救助备注',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `create_user` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '创建人编号',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `update_user` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '更新人编号',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='站点救助宠物记录表';
+
+CREATE TABLE `upload` (
+  `id` varchar(64) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '主键',
+  `type` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '文件类型',
+  `name` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '字段名',
+  `file_src` longtext COLLATE utf8_bin COMMENT '文件',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `create_user` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '创建人编号',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `update_user` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '更新人编号',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='文件表';
+
+
+
+CREATE TABLE `user` (
+  `id` varchar(64) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `username` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '账号',
+  `password` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '密码',
+  `telephone` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '电话号',
+  `old` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '年龄',
+  `role` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '角色 权限',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `create_user` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '创建人编号',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `update_user` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '更新人编号',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='员工管理员表';
+
+
+
+
+
+
+
+
+
+
+
+

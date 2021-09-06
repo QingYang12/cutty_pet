@@ -1,0 +1,69 @@
+
+
+
+接口
+	查询宠物             1   API001     /petStorage/searchPet                                     
+	新增宠物字典：       1   API002     /dictionary/insert
+	修改宠物字典         1   API003     /dictionary/update
+	删除宠物字典         1   API004     /dictionary/delete
+	查询宠物字典         1   API005     /dictionary/queryByPage
+	顾客收养宠物：       1   API006     /adoptRecordHistory/customerAdopt
+	顾客收养宠物历史查询 1   API007     /adoptRecordHistory/queryByPage
+	站点救助宠物：       1   API008     /succourRecordHistory/sitSuccour
+	站点救助宠物历史查询 1   API009     /succourRecordHistory/queryByPage
+	顾客注册             1   API0010    /customer/insert
+	顾客查询             1   API0011    /customer/queryByPage
+	增管理员             1   API0012    /user/insert
+	删管理员             1   API0013    /user/delete
+	改管理员             1   API0014    /user/update
+	查管理员             1   API0015    /user/queryByPage
+	顾客修改             1   API0016    /customer/update
+	顾客删除             1   API0017    /customer/delete
+	文件上传             1   API0018    /upLoadFile/upLoad
+	文件查询             1   API0019    /upLoadFile/selectOne
+	文件删除             1   API0020    /upLoadFile/delete
+	文件下载             1   API0021    /upLoadFile/downLoad
+	登录                 1   API0022    /user/login
+	登出：               1   API0023    /user/logout
+	根据token查用户信息：1   API0024    /user/info
+
+
+
+页面
+	主页（搜索页） --查询操作
+	宠物字典管理页 --增删改查操作
+	员工管理页     --增删改查操作                                                1
+	顾客管理页     --增删改查操作
+	宠物详情页     --宠物图片 --简单介绍  --详细介绍  --收养备注 --收养操作
+	宠物救助录入页 --救助时间 --救助人账号 --宠物code --救助备注 --救助操作
+	个人中心页     --个人收养记录 --个人救助记录   --个人信息                                
+  
+  
+  
+
+  
+测试数据
+	管理员
+		账号 admin
+		密码 admin
+	用户	
+		账号 editor
+		密码 editor
+
+数据库  
+	pet
+	用户 root
+	密码 123456
+
+使用方式
+	admin
+	1.先添加宠物字典
+	2.救助宠物
+	3.在救助历史 和收养历史中查看记录，在主页查看宠物库存。
+	editor
+	1主页选择宠物
+	2宠物详情中选择收养宠物
+	3在个人中心中查看收养记录
+
+
+

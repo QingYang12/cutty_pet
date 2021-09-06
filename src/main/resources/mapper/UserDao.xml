@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cutty_pet.cutty_pet.user.dao.UserDao">
+
+    <resultMap type="com.cutty_pet.cutty_pet.user.entity.User" id="UserMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="username" column="username" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="telephone" column="telephone" jdbcType="VARCHAR"/>
+        <result property="old" column="old" jdbcType="VARCHAR"/>
+        <result property="role" column="role" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="createUser" column="create_user" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="updateUser" column="update_user" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="UserMap">
+        select
+          id, username, password, telephone, old, role, create_time, create_user, update_time, update_user
+        from pet.user
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="UserMap">
+        select
+          id, username, password, telephone, old, role, create_time, create_user, update_time, update_user
+        from pet.user
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="UserMap">
+        select
+        id, username, password, telephone, old, role, create_time, create_user, update_time, update_user
+        from pet.user
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="username != null and username != ''">
+                and username = #{username}
+            </if>
+            <if test="password != null and password != ''">
+                and password = #{password}
+            </if>
+            <if test="telephone != null and telephone != ''">
+                and telephone = #{telephone}
+            </if>
+            <if test="old != null and old != ''">
+                and old = #{old}
+            </if>
+            <if test="role != null and role != ''">
+                and role = #{role}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="createUser != null and createUser != ''">
+                and create_user = #{createUser}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="updateUser != null and updateUser != ''">
+                and update_user = #{updateUser}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into pet.user(id,username, password, telephone, old, role, create_time, create_user, update_time, update_user)
+        values (#{id},#{username}, #{password}, #{telephone}, #{old}, #{role}, #{createTime}, #{createUser}, #{updateTime}, #{updateUser})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into pet.user(username, password, telephone, old, role, create_time, create_user, update_time,
+        update_user)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.username}, #{entity.password}, #{entity.telephone}, #{entity.old}, #{entity.role},
+            #{entity.createTime}, #{entity.createUser}, #{entity.updateTime}, #{entity.updateUser})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into pet.user(username, password, telephone, old, role, create_time, create_user, update_time,
+        update_user)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.username}, #{entity.password}, #{entity.telephone}, #{entity.old}, #{entity.role},
+            #{entity.createTime}, #{entity.createUser}, #{entity.updateTime}, #{entity.updateUser})
+        </foreach>
+        on duplicate key update
+        username = values(username) , password = values(password) , telephone = values(telephone) , old = values(old) ,
+        role = values(role) , create_time = values(create_time) , create_user = values(create_user) , update_time =
+        values(update_time) , update_user = values(update_user)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update pet.user
+        <set>
+            <if test="username != null and username != '' ">
+                username = #{username},
+            </if>
+            <if test="password != null and password != ''">
+                password = #{password},
+            </if>
+            <if test="telephone != null and telephone != ''">
+                telephone = #{telephone},
+            </if>
+            <if test="old != null and old != ''">
+                old = #{old},
+            </if>
+            <if test="role != null and role != ''">
+                role = #{role},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="createUser != null and createUser != ''">
+                create_user = #{createUser},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="updateUser != null and updateUser != ''">
+                update_user = #{updateUser},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from pet.user where id = #{id}
+    </delete>
+
+</mapper>
+

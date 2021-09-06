@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cutty_pet.cutty_pet.succour.dao.SuccourRecordHistoryDao">
+
+    <resultMap type="com.cutty_pet.cutty_pet.succour.entity.SuccourRecordHistory" id="SuccourRecordHistoryMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="succourOrderId" column="succour_order_id" jdbcType="VARCHAR"/>
+        <result property="petCode" column="pet_code" jdbcType="VARCHAR"/>
+        <result property="succourTime" column="succour_time" jdbcType="TIMESTAMP"/>
+        <result property="succourUsername" column="succour_username" jdbcType="VARCHAR"/>
+        <result property="succourRemark" column="succour_remark" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="createUser" column="create_user" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="updateUser" column="update_user" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="SuccourRecordHistoryMap">
+        select
+          id, succour_order_id, succour_time, succour_username, succour_remark, create_time, create_user, update_time, update_user ,pet_code
+        from pet.succour_record_history
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="SuccourRecordHistoryMap">
+        select
+          id, succour_order_id, succour_time, succour_username, succour_remark, create_time, create_user, update_time, update_user ,pet_code
+        from pet.succour_record_history
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="SuccourRecordHistoryMap">
+        select
+        id, succour_order_id, succour_time, succour_username, succour_remark, create_time, create_user, update_time,
+        update_user ,pet_code
+        from pet.succour_record_history
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="petCode != null and petCode != ''">
+                and pet_code = #{petCode}
+            </if>
+            <if test="succourOrderId != null and succourOrderId != ''">
+                and succour_order_id = #{succourOrderId}
+            </if>
+            <if test="succourTime != null">
+                and succour_time = #{succourTime}
+            </if>
+            <if test="succourUsername != null and succourUsername != ''">
+                and succour_username = #{succourUsername}
+            </if>
+            <if test="succourRemark != null and succourRemark != ''">
+                and succour_remark = #{succourRemark}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="createUser != null and createUser != ''">
+                and create_user = #{createUser}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="updateUser != null and updateUser != ''">
+                and update_user = #{updateUser}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into pet.succour_record_history(id,succour_order_id, succour_time, succour_username, succour_remark, create_time, create_user, update_time, update_user,pet_code)
+        values (#{id}, #{succourOrderId}, #{succourTime}, #{succourUsername}, #{succourRemark}, #{createTime}, #{createUser}, #{updateTime}, #{updateUser}, #{petCode})
+    </insert>
+
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update pet.succour_record_history
+        <set>
+            <if test="succourOrderId != null and succourOrderId != ''">
+                succour_order_id = #{succourOrderId},
+            </if>
+            <if test="petCode != null and petCode != ''">
+                pet_code = #{petCode},
+            </if>
+            <if test="succourTime != null">
+                succour_time = #{succourTime},
+            </if>
+            <if test="succourUsername != null and succourUsername != ''">
+                succour_username = #{succourUsername},
+            </if>
+            <if test="succourRemark != null and succourRemark != ''">
+                succour_remark = #{succourRemark},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="createUser != null and createUser != ''">
+                create_user = #{createUser},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="updateUser != null and updateUser != ''">
+                update_user = #{updateUser},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from pet.succour_record_history where id = #{id}
+    </delete>
+
+</mapper>
+

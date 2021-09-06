@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cutty_pet.cutty_pet.pet.dao.PetStorageDao">
+
+    <resultMap type="com.cutty_pet.cutty_pet.pet.entity.PetStorage" id="PetStorageMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="petCode" column="pet_code" jdbcType="VARCHAR"/>
+        <result property="petNumber" column="pet_number" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="createUser" column="create_user" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="updateUser" column="update_user" jdbcType="VARCHAR"/>
+    </resultMap>
+    <!--主页搜索宠物接口 API001-->
+    <select id="searchPet" parameterType="com.cutty_pet.cutty_pet.pet.vo.PetStorageVo" resultType="com.cutty_pet.cutty_pet.pet.dto.PetStorageDto">
+        SELECT
+            p.id as id,
+            p.pet_code as petCode,
+            p.pet_number as petNumber,
+            d.business_type as businessType,
+            d.name	 as name,
+            d.img_search as imgSearch,
+            d.imgone	 as imgone,
+            d.imgtwo	 as imgtwo,
+            d.imgthree	 as imgthree,
+            d.pet_style as petStyle,
+            d.pet_type	 as petType,
+            d.pet_details as petDetails,
+            d.remark	 as remark,
+            p.create_time	 as createTime,
+            p.create_user as createUser,
+            p.update_time	 as updateTime,
+            p.update_user	 as updateUser
+        FROM
+        pet_storage p
+        left join dictionary d on(p.pet_code=d.code and d.business_type='pet')
+        <where>
+        1=1 and p.pet_number>=1
+            <if test="id != null and id != ''">
+                and p.id = #{id}
+            </if>
+            <if test="petCode != null and petCode != ''">
+                and p.pet_code = #{petCode}
+            </if>
+            <if test="petNumber != null">
+                and p.pet_number = #{petNumber}
+            </if>
+            <if test="name != null and name != ''">
+                and d.name = #{name}
+            </if>
+            <if test="petStyle != null and petStyle != ''">
+                and d.pet_style = #{petStyle}
+            </if>
+            <if test="petType != null and petType != ''">
+                and d.pet_type = #{petType}
+            </if>
+            <if test="createTime != null">
+                and p.create_time = #{createTime}
+            </if>
+            <if test="createUser != null and createUser != ''">
+                and p.create_user = #{createUser}
+            </if>
+            <if test="updateTime != null">
+                and p.update_time = #{updateTime}
+            </if>
+            <if test="updateUser != null and updateUser != ''">
+                and p.update_user = #{updateUser}
+            </if>
+        </where>
+    </select>
+    <!--查询单个-->
+    <select id="queryById" resultMap="PetStorageMap">
+        select
+          id, pet_code, pet_number, create_time, create_user, update_time, update_user
+        from pet.pet_storage
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="PetStorageMap">
+        select
+          id, pet_code, pet_number, create_time, create_user, update_time, update_user
+        from pet.pet_storage
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="PetStorageMap">
+        select
+        id, pet_code, pet_number, create_time, create_user, update_time, update_user
+        from pet.pet_storage
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="petCode != null and petCode != ''">
+                and pet_code = #{petCode}
+            </if>
+            <if test="petNumber != null">
+                and pet_number = #{petNumber}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="createUser != null and createUser != ''">
+                and create_user = #{createUser}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="updateUser != null and updateUser != ''">
+                and update_user = #{updateUser}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into pet.pet_storage(id,pet_code, pet_number, create_time, create_user, update_time, update_user)
+        values (#{id},#{petCode}, #{petNumber}, #{createTime}, #{createUser}, #{updateTime}, #{updateUser})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into pet.pet_storage(pet_code, pet_number, create_time, create_user, update_time, update_user)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.petCode}, #{entity.petNumber}, #{entity.createTime}, #{entity.createUser}, #{entity.updateTime},
+            #{entity.updateUser})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into pet.pet_storage(pet_code, pet_number, create_time, create_user, update_time, update_user)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.petCode}, #{entity.petNumber}, #{entity.createTime}, #{entity.createUser}, #{entity.updateTime},
+            #{entity.updateUser})
+        </foreach>
+        on duplicate key update
+        pet_code = values(pet_code) , pet_number = values(pet_number) , create_time = values(create_time) , create_user
+        = values(create_user) , update_time = values(update_time) , update_user = values(update_user)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update pet.pet_storage
+        <set>
+            <if test="petCode != null and petCode != ''">
+                pet_code = #{petCode},
+            </if>
+            <if test="petNumber != null">
+                pet_number = #{petNumber},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="createUser != null and createUser != ''">
+                create_user = #{createUser},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="updateUser != null and updateUser != ''">
+                update_user = #{updateUser},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from pet.pet_storage where id = #{id}
+    </delete>
+
+</mapper>
+

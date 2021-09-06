@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cutty_pet.cutty_pet.upload.dao.UpLoadDao">
+
+    <resultMap type="com.cutty_pet.cutty_pet.upload.entity.FileDB" id="DictionaryMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="type" column="type" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="fileSrc" column="file_src" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="createUser" column="create_user" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="updateUser" column="update_user" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="DictionaryMap">
+        select
+          id, type,  name, file_src, create_time, create_user, update_time, update_user
+        from pet.upload
+        where id = #{id}
+    </select>
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into pet.upload(id,type, name, file_src, create_time, create_user, update_time, update_user)
+        values (#{id},#{type},#{name}, #{fileSrc}, #{createTime}, #{createUser}, #{updateTime}, #{updateUser})
+    </insert>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from pet.upload where id = #{id}
+    </delete>
+</mapper>
+
