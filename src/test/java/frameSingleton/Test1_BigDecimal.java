@@ -1,5 +1,6 @@
-package com.cutty_pet.cutty_pet;
+package frameSingleton;
 
+import com.cutty_pet.cutty_pet.CuttyPetApplication;
 import com.cutty_pet.cutty_pet.common.PageParam;
 import com.cutty_pet.cutty_pet.pet.dao.PetStorageDao;
 import com.cutty_pet.cutty_pet.pet.dto.PetStorageDto;
@@ -22,7 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = CuttyPetApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class CuttyPetApplicationTests2 {
+class Test1_BigDecimal {
     @InjectMocks
     PetStorageServiceImpl petStorageServiceImpl;
     @Mock
