@@ -1,4 +1,4 @@
-package com.cutty_pet.cutty_pet.util.data;
+package com.cutty_pet.cutty_pet.util.thread;
 
 public class LongEvent {
     private long value;

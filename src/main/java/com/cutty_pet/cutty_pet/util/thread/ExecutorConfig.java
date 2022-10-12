@@ -1,4 +1,4 @@
-package com.cutty_pet.cutty_pet.util.data;
+package com.cutty_pet.cutty_pet.util.thread;
 
 
 import org.slf4j.Logger;

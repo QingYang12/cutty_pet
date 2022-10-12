@@ -1,4 +1,4 @@
-package com.cutty_pet.cutty_pet.util.data;
+package com.cutty_pet.cutty_pet.util.thread;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cutty_pet.cutty_pet.common.thread.TResponse;
@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 public class TestThread {
     /**

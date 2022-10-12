@@ -1,4 +1,4 @@
-package com.cutty_pet.cutty_pet.util.data;
+package com.cutty_pet.cutty_pet.util.thread;
 
 import com.alibaba.fastjson.JSONObject;
 import com.lmax.disruptor.RingBuffer;
@@ -6,7 +6,6 @@ import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.util.DaemonThreadFactory;
 
 import java.nio.ByteBuffer;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MyTestDisruptor {
