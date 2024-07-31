@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8088
 servlet:
   context-path: /
 jdbcUrl: jdbc:mysql://localhost:3306/pet?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
