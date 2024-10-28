@@ -76,7 +76,7 @@ public class EmbeddedOpsController {
                 } else {
                     // 等待一段时间再继续拉取
                     try {
-                        Thread.sleep(500);
+                        Thread.sleep(100);
                         key--;
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -85,7 +85,7 @@ public class EmbeddedOpsController {
             }
 
             if (key < 0) {
-                // 如果循环2次还未拉取到消息，则将结果设置为空字符串     此时已等待1秒钟。
+                // 如果循环2次还未拉取到消息，则将结果设置为空字符串     此时已等待0.2秒钟。
                 deferredResult.setResult("");
                 System.out.printf("Received message:  null");
             }
