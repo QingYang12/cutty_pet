@@ -1,6 +1,10 @@
 package com.cutty_pet.cutty_pet.devops.controller;
 
+import com.alibaba.fastjson.JSONObject;
+import com.cutty_pet.cutty_pet.customer.service.CustomerService;
+import com.cutty_pet.cutty_pet.devops.entity.DEVOPSEntity;
 import com.cutty_pet.cutty_pet.devops.entity.EmbeddedEntity;
+import com.cutty_pet.cutty_pet.devops.service.EmbeddedService;
 import com.fasterxml.jackson.databind.deser.std.StringDeserializer;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -8,15 +12,21 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.UnsupportedEncodingException;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.io.*;
 import java.net.URLDecoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Properties;
@@ -32,6 +42,10 @@ public class EmbeddedOpsController {
 
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
+
+    @Resource
+    private EmbeddedService embeddedServiceImpl;
+
     @GetMapping("embedded/hand")
     public DeferredResult<String> hand(@RequestParam("topic") String topic, @RequestParam(value = "group", required = false) String group) throws UnsupportedEncodingException {
         // 创建异步请求对象
@@ -124,4 +138,87 @@ public class EmbeddedOpsController {
         }
         return code;
     }
+    @RequestMapping(value = "/voiceUpload", method = RequestMethod.POST)
+    @ResponseBody
+    public JSONObject voiceUpload(HttpServletRequest request, @RequestParam("file") MultipartFile[] files) {
+        String uploadDirRoot = "/Users/wanghao/Documents/pyvicetemp/";
+        long currentTimeMillis = System.currentTimeMillis();
+        //String taskdir=""+currentTimeMillis;
+        String taskdir=request.getParameter("taskdir");
+        String uploadDir=uploadDirRoot+taskdir;
+        JSONObject resjson= new JSONObject();
+        resjson.put("taskdir",taskdir);
+        try {
+            for (MultipartFile file : files) {
+                // 获取文件信息，例如文件名和大小等元数据
+                String originalFilename = request.getParameter("fileName");
+                String fileName = file.getOriginalFilename();
+                long fileSize = file.getSize();
+                String contentType = file.getContentType();
+                // 执行文件上传操作，将文件保存到指定文件夹下
+                File uploadDirf = new File(uploadDir);
+                if(!uploadDirf.exists()){
+                    boolean success = uploadDirf.mkdirs();
+                }else{
+
+                }
+                fileName="input.wav";
+                Path filePath = Paths.get(uploadDir, fileName);
+                Files.copy(file.getInputStream(), filePath);
+                Thread.sleep(2000);
+                //执行python 脚本 OCR
+                //执行 执行后返回 解析json
+                resjson= embeddedServiceImpl.voiceUpload(taskdir,uploadDir,fileName);
+                resjson.put("taskdir",taskdir);
+                // 执行文件上传操作，例如将文件保存到磁盘或数据库中
+                // 这里只是简单地打印出文件信息
+                System.out.println("Received file: " + fileName + ", size=" + fileSize + ", type=" + contentType);
+            }
+
+            return resjson;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return resjson;
+        }
+    }
+
+    /**
+     *
+     * @param param  taskdir
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    // 下载到本地
+    @RequestMapping("dowloadVoice")
+    @ResponseBody
+    public ResponseEntity<byte[]> dowloadVoice(@RequestBody JSONObject param) throws IOException, InterruptedException {
+        String uploadDirRoot = "/Users/wanghao/Documents/pyimgtemp";
+        DEVOPSEntity devOPSEntity = new DEVOPSEntity();
+        devOPSEntity.setId("1L");
+        devOPSEntity.setCreateUser("ssss");
+        String taskdir=param.getString("taskdir");
+        String fileNameStr="output_audio.wav";
+        //下载回传图片
+        // 读取图片文件
+        String imagePath = uploadDirRoot + "/"+taskdir+"/"+fileNameStr;
+        File imageFile = new File(imagePath);
+        InputStream inputStream = new FileInputStream(imageFile);
+
+        // 读取数据到字节数组
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int length;
+        while ((length = inputStream.read(buffer)) != -1) {
+            outputStream.write(buffer, 0, length);
+        }
+        byte[] imageData = outputStream.toByteArray();
+
+        // 构造响应对象，将图片数据写入响应体
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .contentLength(imageData.length)
+                .body(imageData);
+    }
+
 }

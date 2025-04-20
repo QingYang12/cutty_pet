@@ -1,4 +1,4 @@
-package com.cutty_pet.cutty_pet.devops.service.util;
+package com.cutty_pet.cutty_pet.devops.service.aiUtil.omini;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

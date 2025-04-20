@@ -1,5 +1,9 @@
 package com.cutty_pet.cutty_pet.devops.service;
 
+import com.alibaba.fastjson.JSONObject;
+
+import java.io.IOException;
+
 /**
  * 客户收养宠物记录表(AdoptRecordHistory)表服务接口
  *
@@ -16,5 +20,5 @@ public interface EmbeddedService {
      * @return 实例对象
      */
     void queryById(String id);
-
+    JSONObject voiceUpload(String taskdir ,String path,String fileName)throws IOException;
 }
