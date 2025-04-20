@@ -65,3 +65,7 @@ logging:
     org:
       apache:
         kafka: OFF
+
+
+python_run_path:   "/Users/wanghao/Documents/5.project/7.python_project/testmodel1/venv/bin/python3"
+python_model_path: "/Users/wanghao/Documents/5.project/7.python_project/testmodel1/"

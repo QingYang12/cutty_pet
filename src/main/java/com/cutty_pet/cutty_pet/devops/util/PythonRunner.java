@@ -2,7 +2,10 @@ package com.cutty_pet.cutty_pet.devops.util;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -11,17 +14,21 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@Component
 public class PythonRunner {
-    public static String scriptPathroot ="/Users/wanghao/Documents/2.python_project/testmodel1/";
+
+    @Value("${python_model_path}")
+    public  String scriptPathroot ;
+    @Value("${python_run_path}")
+    public  String runPath ;
     //OCR识别 返回识别到的文字
-    public static JSONObject OCRRunFun (String taskdir) throws IOException, InterruptedException {
+    public  JSONObject OCRRunFun (String taskdir) throws IOException, InterruptedException {
         JSONObject  resjson=new JSONObject();
         // 设置要执行的Python脚本
         String scriptName = "main.py";
         String scriptPath =scriptPathroot+scriptName;
         List<String> commandList = new ArrayList<>();
-        commandList.add("/Users/wanghao/.virtualenvs/p3t2env/bin/python");
+        commandList.add(runPath);
         commandList.add(scriptPath);
         commandList.add("-i");
         commandList.add(taskdir);
@@ -76,7 +83,7 @@ public class PythonRunner {
         return  resjson;
     }
     //修改图片 输出到指定目录
-    public static JSONObject modifiedImageFun (String taskdir) throws IOException, InterruptedException {
+    public  JSONObject modifiedImageFun (String taskdir) throws IOException, InterruptedException {
         JSONObject resJSon=new JSONObject();
         // 设置要执行的Python脚本
         String scriptName = "modified_image_module1.py";

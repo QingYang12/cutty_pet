@@ -3,6 +3,7 @@ package com.cutty_pet.cutty_pet.devops.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.cutty_pet.cutty_pet.devops.entity.DEVOPSEntity;
 import com.cutty_pet.cutty_pet.devops.util.PythonRunner;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,13 @@ import java.nio.file.Paths;
 @RequestMapping("vxapi")
 @CrossOrigin(origins = "*", methods = {RequestMethod.POST}, allowedHeaders = {"Content-Type"})
 public class VXOpsController {
+
+    private final PythonRunner pythonRunner;
+
+    @Autowired
+    public VXOpsController(PythonRunner pythonRunner) {
+        this.pythonRunner = pythonRunner;
+    }
 
     @RequestMapping("test")
     @ResponseBody
@@ -58,7 +66,7 @@ public class VXOpsController {
                 Thread.sleep(2000);
                 //执行python 脚本 OCR
                 //执行 执行后返回 解析json
-                resjson= PythonRunner.OCRRunFun(taskdir);
+                resjson= pythonRunner.OCRRunFun(taskdir);
                 resjson.put("taskdir",taskdir);
                 // 执行文件上传操作，例如将文件保存到磁盘或数据库中
                 // 这里只是简单地打印出文件信息
@@ -87,7 +95,7 @@ public class VXOpsController {
         //读取json
         //解析json
         //调用模型生成新图片 到执行路径
-        PythonRunner.modifiedImageFun(taskdir);
+        pythonRunner.modifiedImageFun(taskdir);
         return resjson;
     }
 
