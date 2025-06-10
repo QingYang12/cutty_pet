@@ -1,6 +1,7 @@
 package com.cutty_pet.cutty_pet.devops.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cutty_pet.cutty_pet.common.cache.GuavaCacheManager;
 import com.cutty_pet.cutty_pet.customer.service.CustomerService;
 import com.cutty_pet.cutty_pet.devops.entity.DEVOPSEntity;
 import com.cutty_pet.cutty_pet.devops.entity.EmbeddedEntity;
@@ -28,7 +29,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 
@@ -47,9 +50,9 @@ public class EmbeddedOpsController {
     private EmbeddedService embeddedServiceImpl;
 
     @GetMapping("embedded/hand")
-    public DeferredResult<String> hand(@RequestParam("topic") String topic, @RequestParam(value = "group", required = false) String group) throws UnsupportedEncodingException {
+    public DeferredResult<String> hand(@RequestParam("topic") String topic, @RequestParam(value = "group", required = false) String group, @RequestParam(value = "type", required = false) String type) throws UnsupportedEncodingException {
         // 创建异步请求对象
-        DeferredResult<String> deferredResult = new DeferredResult<>(30000L);
+        DeferredResult<String> deferredResult = new DeferredResult<>(30L); //kafka 换成 30000L
         EmbeddedEntity devOPSEntity = new EmbeddedEntity();
         // topic 是产品的 品类+ 唯一ID
         // group 分组  控制设备集群使用，一般不用
@@ -68,49 +71,69 @@ public class EmbeddedOpsController {
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
 
-        // 创建 Kafka 消费者实例
-        Consumer<String, String> consumer = consumerFactory.createConsumer(group, "", String.valueOf(props));
+        if(type!=null&&"c".equals(type)){ // c  k
+            // 获取缓存
+            LinkedList<String> cachedList = GuavaCacheManager.getInstance().get("hand", LinkedList.class);
+            if(cachedList!=null){
+                String json=cachedList.poll();
+                JSONObject jsonObject= (JSONObject) JSONObject.parse(json);
+                if(jsonObject!=null){
+                    String message=jsonObject.getString("message");
+                    deferredResult.setResult(message);
+                }else{
+                    deferredResult.setResult("9");
+                }
 
-        // 订阅指定的 topic
-        consumer.subscribe(Collections.singleton(topic));
-        // 使用异步方式处理请求
-        CompletableFuture.runAsync(() -> {
-            int key =2;
-            // 循环拉取消息
-            while (key>=0) {
-                // 拉取一批消息
-                ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
-                if (!records.isEmpty()) {
-                    ConsumerRecord<String, String> record = records.iterator().next();
-                    // 处理消息...
-                    System.out.printf("Received message: key = %s, value = %s%n", record.key(), record.value());
-                    // 将结果返回给客户端
-                    deferredResult.setResult(record.value());
-                    break;
-                } else {
-                    // 等待一段时间再继续拉取
-                    try {
-                        Thread.sleep(100);
-                        key--;
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+            }else{
+                deferredResult.setResult("9");
+                System.out.printf(">> ");
+            }
+        }else{
+            // 创建 Kafka 消费者实例
+            Consumer<String, String> consumer = consumerFactory.createConsumer(group, "", String.valueOf(props));
+            // 订阅指定的 topic
+            consumer.subscribe(Collections.singleton(topic));
+            // 使用异步方式处理请求
+            CompletableFuture.runAsync(() -> {
+                int key =2;
+                // 循环拉取消息
+                while (key>=0) {
+                    // 拉取一批消息
+                    ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
+                    if (!records.isEmpty()) {
+                        ConsumerRecord<String, String> record = records.iterator().next();
+                        // 处理消息...
+                        System.out.println();
+                        System.out.printf("Received message: key = %s, value = %s%n", record.key(), record.value());
+                        // 将结果返回给客户端
+                        deferredResult.setResult(record.value());
+                        break;
+                    } else {
+                        // 等待一段时间再继续拉取
+                        try {
+                            Thread.sleep(100);
+                            key--;
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
-            }
 
-            if (key < 0) {
-                // 如果循环2次还未拉取到消息，则将结果设置为空字符串     此时已等待0.2秒钟。
-                deferredResult.setResult("");
-                System.out.printf("Received message:  null");
-            }
-            // 关闭消费者
-            consumer.close();
-        });
+                if (key < 0) {
+                    // 如果循环2次还未拉取到消息，则将结果设置为空字符串     此时已等待0.2秒钟。
+                    deferredResult.setResult("9");
+                    System.out.printf(">> ");
+                }
+                // 关闭消费者
+                consumer.close();
+            });
+        }
+
 
         return deferredResult;// 返回的是单片机应该作出的指令
     }
     @GetMapping("embedded/handpush")
-    public String handpush(@RequestParam("topic") String topic,  @RequestParam(value = "group", required = false) String group,  @RequestParam(value = "message", required = false) String message) throws UnsupportedEncodingException {
+    public String handpush(@RequestParam("topic") String topic,  @RequestParam(value = "group", required = false) String group,  @RequestParam(value = "message", required = false) String message,  @RequestParam(value = "type", required = false) String type) throws UnsupportedEncodingException {
         String code ="200";
         // topic 是产品的 品类+ 唯一ID
         // group 分组  控制设备集群使用，一般不用
@@ -127,8 +150,25 @@ public class EmbeddedOpsController {
                 message= message.trim();
                 System.out.println("message send: "+message);
                 // 发送消息到 Kafka
+                if(type!=null&&type.equals("c")){  //  c      k
+                    LinkedList<String> cachedList = GuavaCacheManager.getInstance().get("hand", LinkedList.class);
+                    JSONObject json=new JSONObject();
+                    json.put("topic",topic);
+                    json.put("group",group);
+                    json.put("message",message);
+                    json.put("type",type);
+                    if(cachedList!=null){
+                        cachedList.add(json.toString());
+                    }else{
+                        LinkedList<String> cachedListNew =new LinkedList<String>();
+                        cachedListNew.add(json.toString());
+                        GuavaCacheManager.getInstance().put("hand",cachedListNew);
+                    }
 
-                kafkaTemplate.send(topic, message);
+                }else{
+                    kafkaTemplate.send(topic, message);
+                }
+
             }else{
                 System.out.println("无效消息");
             }
