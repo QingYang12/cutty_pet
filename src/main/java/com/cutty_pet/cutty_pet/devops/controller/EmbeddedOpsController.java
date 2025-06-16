@@ -258,10 +258,11 @@ public class EmbeddedOpsController {
                 .body(imageData);
     }
     // 上传图片
-    @RequestMapping("/uploadImage")
+    @RequestMapping("/embedded/uploadImage")
     public ResponseEntity<String> uploadImage(@RequestBody byte[] imageData){
         try{
-            String filename="received_"+new Date().getTime()+ ".jpg";
+            String uploadDirRoot = "/Users/wanghao/Documents/embeddedImage";
+            String filename=uploadDirRoot+"/"+"received_"+new Date().getTime()+ ".jpg";
             try(FileOutputStream fos =new FileOutputStream(filename)){
                 fos.write(imageData);
             }
