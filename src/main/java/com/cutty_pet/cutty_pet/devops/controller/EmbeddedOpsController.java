@@ -29,10 +29,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 
@@ -260,5 +257,18 @@ public class EmbeddedOpsController {
                 .contentLength(imageData.length)
                 .body(imageData);
     }
-
+    // 上传图片
+    @RequestMapping("/uploadImage")
+    public ResponseEntity<String> uploadImage(@RequestBody byte[] imageData){
+        try{
+            String filename="received_"+new Date().getTime()+ ".jpg";
+            try(FileOutputStream fos =new FileOutputStream(filename)){
+                fos.write(imageData);
+            }
+            return ResponseEntity.ok("received image size: "+ imageData.length + " bytes saved as "+filename);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Upload failed");
+        }
+    }
 }
