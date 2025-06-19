@@ -6,13 +6,17 @@ import com.cutty_pet.cutty_pet.customer.service.CustomerService;
 import com.cutty_pet.cutty_pet.devops.entity.DEVOPSEntity;
 import com.cutty_pet.cutty_pet.devops.entity.EmbeddedEntity;
 import com.cutty_pet.cutty_pet.devops.service.EmbeddedService;
+import com.cutty_pet.cutty_pet.devops.service.impl.OminiHandVsionModelShell;
 import com.fasterxml.jackson.databind.deser.std.StringDeserializer;
+import org.apache.commons.io.IOUtils;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.ConsumerFactory;
@@ -271,5 +275,68 @@ public class EmbeddedOpsController {
             e.printStackTrace();
             return ResponseEntity.status(500).body("Upload failed");
         }
+    }
+
+    // 加载图片
+    @GetMapping("/embedded/image")
+    public ResponseEntity<byte[]> getImage() throws IOException {
+        String uploadDirRoot = "/Users/wanghao/Documents/embeddedImage";
+
+        // 获取目录下所有文件
+        File dir = new File(uploadDirRoot);
+        if (!dir.exists() || !dir.isDirectory()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // 目录不存在或不是一个目录
+        }
+
+        // 找到最新的文件
+        File latestFile = Files.list(dir.toPath())
+                .filter(Files::isRegularFile)
+                .max(Comparator.comparingLong(file -> {
+                    try {
+                        return Files.getLastModifiedTime(file).toMillis();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }))
+                .map(java.nio.file.Path::toFile)
+                .orElse(null);
+
+        if (latestFile == null) {
+            return ResponseEntity.notFound().build(); // 没有找到任何文件
+        }
+
+        // 读取文件内容
+        try (InputStream in = new FileInputStream(latestFile)) {
+            byte[] imageBytes = IOUtils.toByteArray(in);
+
+            final HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.IMAGE_JPEG);
+
+            return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK); // 使用 OK 而不是 CREATED
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // 处理读取错误
+        }
+    }
+
+
+
+
+    @GetMapping("embedded/startmodel")
+    public String startmodel( @RequestParam(value = "modeltype", required = false) String modeltype) throws UnsupportedEncodingException {
+        String code ="200";
+
+        try{
+                if(modeltype.equals("true")){
+                    OminiHandVsionModelShell.getInstance().startModel();
+                }else{
+                    OminiHandVsionModelShell.getInstance().stopModel();
+                }
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+            code="500";
+        }
+        return code;
     }
 }
